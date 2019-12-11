@@ -5,6 +5,8 @@ const engineerMod = require('../models/engineerMod')
 var template = require('../middleware/responseMiddleware')
 const bcrypt = require('bcrypt')
 const salt = bcrypt.genSaltSync(10)
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+let requireCheck = []
 
 module.exports = {
   authi: (req, res) => {
@@ -12,6 +14,19 @@ module.exports = {
       email,
       password
     } = req.body
+    if (!email) {
+      requireCheck.push('Email is required')
+    }
+    if (!emailRegex.test(email)) {
+      requireCheck.push('email not valid')
+    } 
+    if (!password) {
+      requireCheck.push('Password is required')
+    }
+    if (requireCheck.length) {
+      return template.tmpErr(res, requireCheck, 400)
+    }
+
     engineerMod.getUser(email)
       .then(result => {
         const dataId = result[0].id
@@ -27,7 +42,7 @@ module.exports = {
         }
       })
       .catch(err => {
-        template.tmpErr(res, err, 400)
+        template.tmpErr(res, 'email not found', 400)
       })
   },
 
@@ -93,9 +108,6 @@ module.exports = {
       location,
       dateOfBirth
     } = req.body
-
-    const requireCheck = []
-    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
     if (!createEmail) {
       requireCheck.push('createEmail is required')

@@ -12,7 +12,7 @@ module.exports = router
 // engineer --------------
 router.route('/engineer/login').post(engineerCon.authi)
 
-router.route('/engineer').get(jwtmiddleware.jwtCheckingGlobal, engineerCon.index)
+router.route('/engineer').get(jwtmiddleware.jwtCheckingGlobal, cachemiddleware.checkCache, engineerCon.index)
 router.route('/engineer/:id').get(jwtmiddleware.jwtCheckingGlobal, cachemiddleware.checkCache, engineerCon.show)
 
 router.route('/engineer').post(uploadmiddleware.upload.single('showcase'), engineerCon.create)
