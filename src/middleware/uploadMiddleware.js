@@ -15,12 +15,21 @@ const storage = multer.diskStorage({
     if (file.mimetype === 'image/jpeg') {
       filetype = 'jpg'
     }
+    if (file.mimetype === 'image/jpeg') {
+      filetype = 'jpg'
+    }
     cb(null, 'image-' + uuidv1() + '.' + filetype)
   }
 })
+const maxSize = 1000 * 1000 * 1
 
 module.exports = {
   upload: multer({
-    storage: storage
-  })
+    storage: storage,
+    limits: { fileSize: maxSize }
+  }),
+  uploadShowcase: multer({
+    storage: storage,
+    limits: { fileSize: maxSize }
+  }).single('showcase')
 }

@@ -5,8 +5,10 @@ const companyMod = require('../models/companyMod')
 var template = require('../middleware/responseMiddleware')
 const bcrypt = require('bcrypt')
 const salt = bcrypt.genSaltSync(10)
-const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-let requireCheck = []
+// const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+const redis = require('redis')
+const redisClient = redis.createClient()
+const requireCheck = []
 
 module.exports = {
   authi: (req, res) => {
@@ -17,9 +19,9 @@ module.exports = {
     if (!email) {
       requireCheck.push('Email is required')
     }
-    if (!emailRegex.test(email)) {
-      requireCheck.push('email not valid')
-    } 
+    // if (!emailRegex.test(email)) {
+    //   requireCheck.push('email not valid')
+    // }
     if (!password) {
       requireCheck.push('Password is required')
     }
@@ -42,7 +44,7 @@ module.exports = {
         }
       })
       .catch(err => {
-        template.tmpErr(res, 'email not found', 400)
+        template.tmpErr(res, err + 'email not found', 400)
       })
   },
 
@@ -84,9 +86,9 @@ module.exports = {
     if (!createEmail) {
       requireCheck.push('createEmail is required')
     }
-    if (!emailRegex.test(createEmail)) {
-      requireCheck.push('email not valid')
-    } 
+    // if (!emailRegex.test(createEmail)) {
+    //   requireCheck.push('email not valid')
+    // }
     if (!createPassword) {
       requireCheck.push('createPassword is required')
     }
@@ -123,6 +125,7 @@ module.exports = {
         if (result.length === 0) {
           companyMod.storeCompany(data)
             .then(result => {
+              redisClient.flushdb()
               template.tmpNormal(result, res, 'Success Create New Company', 201, null, true)
             })
             .catch(err => {
@@ -154,6 +157,7 @@ module.exports = {
     ]
     companyMod.updateCompany(data)
       .then(result => {
+        redisClient.flushdb()
         template.tmpNormal(result, res, 'Success Update Data Company', 201, null, true)
       })
       .catch(err => {
@@ -165,6 +169,7 @@ module.exports = {
     const id = req.params.id
     companyMod.deleteCompany(id)
       .then(result => {
+        redisClient.flushdb()
         template.tmpNormal(result, res, 'Data Company Deleted', 201, null, true)
       })
       .catch(err => {

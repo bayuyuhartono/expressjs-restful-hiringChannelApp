@@ -37,6 +37,7 @@ module.exports = {
       idEngineer,
       sender,
       body,
+      readStatus: 'false',
       dateCreated,
       dateUpdated
     }

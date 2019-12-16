@@ -7,11 +7,6 @@ const index = require('./src/index')
 
 // use dependencies
 const app = express()
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*') // update to match the domain you will make the request from
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-  next()
-})
 
 // use middleware for incoming request
 app.use(bodyParser.json()) // parsing json
@@ -21,6 +16,6 @@ app.use(express.static('public'))
 app.use(index)
 
 // listen to connection with callback function
-app.listen(3000, () => {
-  console.log('Server is running on port 3000!')
+app.listen(3030, () => {
+  console.log('Server is running on port 3030!')
 })
