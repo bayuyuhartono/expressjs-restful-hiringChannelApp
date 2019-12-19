@@ -41,6 +41,7 @@ module.exports = {
           template.tmpErr(res, 'Login Failed', 400)
         } else {
           const token = jwt.sign({ who: 'engineer', email: dataEmail, id: dataId }, process.env.JWT_KEY, { expiresIn: '1h' })
+          result[0].who = 'engineer'
           result[0].token = token
           template.tmpNormal(result, res, 'Login Success', 201)
         }
@@ -66,13 +67,14 @@ module.exports = {
         let totalpage = 1
         if (totalCount > limit) {
           totalpage = Math.floor(totalCount / limit)
+          console.log("ss" + totalpage % limit)
           if (totalpage % limit !== 0) {
             totalpage++
           }
         }
         const prevPage = parseInt(page) <= 1 ? page : parseInt(page) - 1
         // const nextPage = parseInt(page) === totalPage ? totalPage : parseInt(page) + 1
-        const nextPage = parseInt(page) >= totalpage ? page : parseInt(page) + 1
+        const nextPage = parseInt(page) < totalpage ? parseInt(page) + 1 : parseInt(page) === totalpage ? page : parseInt(page) - 1
         const pagingInfo = {
           total_page: totalpage.toString(),
           current_page: page.toString(),
@@ -80,6 +82,7 @@ module.exports = {
           prevLink: `${process.env.BASE_URL}${req.originalUrl.replace('page=' + page, 'page=' + prevPage)}`,
           nextLink: `${process.env.BASE_URL}${req.originalUrl.replace('page=' + page, 'page=' + nextPage)}`
         }
+        console.log(pagingInfo.nextLink)
         engineerMod.getEngineer(req)
           .then(result => {
             if (result.length === 0) {

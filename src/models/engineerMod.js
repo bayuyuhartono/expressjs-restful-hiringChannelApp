@@ -31,7 +31,7 @@ module.exports = {
       searchBy = ` WHERE ${req.query.searchBy} LIKE '%${req.query.keyword}%' `
     }
     let sortBy = 'name'
-    if ((req.query.sortBy && (req.query.sortBy === 'name')) || req.query.sortBy === 'skill' || req.query.sortBy === 'date_updated') {
+    if ((req.query.sortBy && (req.query.sortBy === 'name')) || req.query.sortBy === 'skill' || req.query.sortBy === 'dateUpdated') {
       sortBy = req.query.sortBy
       if (req.query.order) {
         if (req.query.order === 'DESC' || req.query.order === 'ASC') {

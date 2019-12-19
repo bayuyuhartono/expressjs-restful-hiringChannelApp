@@ -39,6 +39,7 @@ module.exports = {
           template.tmpErr(res, 'Login Failed', 400)
         } else {
           const token = jwt.sign({ who: 'company', email: dataEmail, id: dataId }, process.env.JWT_KEY, { expiresIn: '1h' })
+          result[0].who = 'company'
           result[0].token = token
           template.tmpNormal(result, res, 'Login Success', 201)
         }

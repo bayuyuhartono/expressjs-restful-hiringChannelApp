@@ -43,7 +43,7 @@ module.exports = {
       console.log(pagingInfo.total_page)
       prevCount = pagingInfo.current_page - 1
     }
-    if (pagingInfo.current_page && pagingInfo.current_page < pagingInfo.total_page) {
+    if (pagingInfo.current_page < pagingInfo.total_page) {
       console.log(pagingInfo.total_page)
       nextCount = pagingInfo.current_page + 1
     }
