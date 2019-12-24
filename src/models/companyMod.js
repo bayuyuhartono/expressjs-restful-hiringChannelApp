@@ -14,11 +14,30 @@ module.exports = {
     })
   },
 
-  getCompany: (id) => {
+  getCompany: (req) => {
+    let searchBy = ''
+    if ((req.query.searchBy && req.query.keyword && (req.query.searchBy === 'name')) ){
+      searchBy = ` WHERE ${req.query.searchBy} LIKE '%${req.query.keyword}%' `
+    }
+
+    const query = `SELECT * FROM company ${searchBy}`
+    return new Promise((resolve, reject) => {
+      conn.query(query, (err, result) => {
+        if (!err) {
+          resolve(result)
+        } else {
+          reject(new Error(err))
+        }
+      })
+    })
+  },
+
+  getCompanySingle: (id) => {
     let wh = ''
     if (id) {
       wh = `WHERE id = '${id}'`
     }
+
     const query = `SELECT * FROM company ${wh}`
     return new Promise((resolve, reject) => {
       conn.query(query, (err, result) => {

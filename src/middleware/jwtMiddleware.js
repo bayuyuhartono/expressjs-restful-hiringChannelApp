@@ -9,13 +9,17 @@ module.exports = {
         next()
       } else {
         res.status(403).json({
-          result: 'Invalid email Token'
+          status: 403,
+          error: true,
+          message: 'Invalid email Token'
         })
       }
     } catch (err) {
       console.log(req.headers)
       res.status(403).json({
-        result: 'Invalid Token'
+        status: 403,
+        error: true,
+        message: 'Invalid Token'
       })
     }
   },
@@ -29,18 +33,24 @@ module.exports = {
           next()
         } else {
           res.status(403).json({
-            result: 'Forbidden Access'
+            status: 403,
+            error: true,
+            message: 'Forbidden Access'
           })
         }
       } else {
         res.status(403).json({
-          result: 'Invalid email Token'
+          status: 403,
+          error: true,
+          message: 'Invalid email Token'
         })
       }
     } catch (err) {
       console.log(req.headers)
       res.status(403).json({
-        result: 'Invalid Token'
+        status: 403,
+        error: true,
+        message: 'Invalid Token'
       })
     }
   },
@@ -54,18 +64,24 @@ module.exports = {
           next()
         } else {
           res.status(403).json({
-            result: 'Forbidden Access'
+            status: 403,
+            error: true,
+            message: 'Forbidden Access'
           })
         }
       } else {
         res.status(403).json({
-          result: 'Invalid email Token'
+          status: 403,
+          error: true,
+          message: 'Invalid email Token'
         })
       }
     } catch (err) {
       console.log(req.headers)
       res.status(403).json({
-        result: 'Invalid Token'
+        status: 403,
+        error: true,
+        message: 'Invalid Token'
       })
     }
   }

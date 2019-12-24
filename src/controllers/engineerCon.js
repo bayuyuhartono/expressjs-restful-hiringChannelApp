@@ -17,6 +17,7 @@ module.exports = {
       email,
       password
     } = req.body
+    console.log(req.body)
     const requireCheck = []
     if (!email) {
       requireCheck.push('Email is required')
@@ -36,7 +37,7 @@ module.exports = {
         const dataId = result[0].id
         const dataEmail = result[0].email
         const dataPass = result[0].password
-        var hashChecking = bcrypt.compareSync(password, dataPass)
+        const hashChecking = bcrypt.compareSync(password, dataPass)
         if (!hashChecking) {
           template.tmpErr(res, 'Login Failed', 400)
         } else {
@@ -213,7 +214,7 @@ module.exports = {
                 template.tmpErr(res, err, 400)
               })
           } else {
-            template.tmpErr(res, 'email was taken', 400)
+            template.tmpNormal([],res, 'email was taken', 200)
           }
         })
         .catch(err => {

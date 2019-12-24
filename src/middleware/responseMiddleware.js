@@ -4,7 +4,9 @@ const redisClient = redis.createClient()
 module.exports = {
   tmpNormal: (values, res, message, numb, redisNeeded, passDelete) => {
     if (!passDelete) {
-      delete values[0].password
+      values.forEach(data => { 
+        delete data.password
+      }); 
     }
     var data = {
       status: numb,
@@ -18,7 +20,7 @@ module.exports = {
       redisClient.setex(redisNeeded, 3600, JSON.stringify(data))
       delete data.cache
     }
-    res.json(data)
+    res.status(200).json(data)
     res.end()
   },
 
@@ -28,14 +30,16 @@ module.exports = {
       error: true,
       message: message
     }
-    res.json(data)
+    res.status(400).json(data)
     res.end()
   },
 
   tmpEngineers: (values, res, message, pagingInfo, redisNeeded) => {
     const curr = values[0].currentCount
-    delete values[0].currentCount
-    delete values[0].password
+    values.forEach(data => { 
+      delete data.password
+      delete data.currentCount
+    }); 
     let prevCount = 0
     let nextCount = 0
 
@@ -66,7 +70,7 @@ module.exports = {
       redisClient.setex(redisNeeded, 3600, JSON.stringify(data))
       delete data.cache
     }
-    res.json(data)
+    res.status(200).json(data)
     res.end()
   }
 

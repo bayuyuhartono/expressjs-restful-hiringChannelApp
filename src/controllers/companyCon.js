@@ -34,7 +34,7 @@ module.exports = {
         const dataId = result[0].email
         const dataEmail = result[0].email
         const dataPass = result[0].password
-        var hashChecking = bcrypt.compareSync(password, dataPass)
+        const hashChecking = bcrypt.compareSync(password, dataPass)
         if (!hashChecking) {
           template.tmpErr(res, 'Login Failed', 400)
         } else {
@@ -50,7 +50,7 @@ module.exports = {
   },
 
   index: (req, res) => {
-    companyMod.getCompany()
+    companyMod.getCompany(req)
       .then(result => {
         template.tmpNormal(result, res, 'Success Get Companys', 200, req.originalUrl)
       })
@@ -61,7 +61,7 @@ module.exports = {
 
   show: (req, res) => {
     const id = req.params.id
-    companyMod.getCompany(id)
+    companyMod.getCompanySingle(id)
       .then(result => {
         if (result.length === 0) {
           template.tmpErr(res, 'Empty', 404)
@@ -133,7 +133,7 @@ module.exports = {
               template.tmpErr(res, err, 400)
             })
         } else {
-          template.tmpErr(res, 'email was taken', 400)
+          template.tmpNormal([],res, 'email was taken', 200)
         }
       })
       .catch(err => {
