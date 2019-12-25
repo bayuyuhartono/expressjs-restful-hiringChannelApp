@@ -84,8 +84,11 @@ module.exports = {
     })
   },
 
-  updateEngineer: (data) => {
-    const query = 'UPDATE  engineer  SET  name = ?, description = ?, skill = ?, location = ?, dateOfBirth = ?, showcase = ?, dateUpdated = ? WHERE id = ?'
+  updateEngineer: (data,fileNeded) => {
+    let query = 'UPDATE  engineer  SET  name = ?, description = ?, skill = ?, location = ?, dateOfBirth = ?, showcase = ?, dateUpdated = ? WHERE id = ?'
+    if (!fileNeded) {
+      query = 'UPDATE  engineer  SET  name = ?, description = ?, skill = ?, location = ?, dateOfBirth = ?, dateUpdated = ? WHERE id = ?'
+    }
     console.log(query + data)
     return new Promise((resolve, reject) => {
       conn.query(query, data, (err, result) => {

@@ -7,8 +7,9 @@ const bcrypt = require('bcrypt')
 const salt = bcrypt.genSaltSync(10)
 // const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 const redis = require('redis')
+const multer = require('multer')
+const uploadmiddleware = require('../middleware/uploadMiddleware')
 const redisClient = redis.createClient()
-const requireCheck = []
 
 module.exports = {
   authi: (req, res) => {
@@ -16,6 +17,7 @@ module.exports = {
       email,
       password
     } = req.body
+    let requireCheck = []
     if (!email) {
       requireCheck.push('Email is required')
     }
@@ -52,7 +54,11 @@ module.exports = {
   index: (req, res) => {
     companyMod.getCompany(req)
       .then(result => {
-        template.tmpNormal(result, res, 'Success Get Companys', 200, req.originalUrl)
+        if (result.length === 0) {
+          template.tmpNormal([], res, 'Not Found', 200)
+        } else {
+          template.tmpNormal(result, res, 'Success Get Companys', 200, req.originalUrl)
+        }
       })
       .catch(err => {
         template.tmpErr(res, err, 400)
@@ -75,95 +81,151 @@ module.exports = {
   },
 
   create: (req, res) => {
-    const id = uuidv4() // generate new id
-    const {
-      createEmail,
-      createPassword,
-      name,
-      location,
-      description
-    } = req.body
+    uploadmiddleware.upload(req, res, function (err) {
+      const id = uuidv4() // generate new id
+      const {
+        createEmail,
+        createPassword,
+        name,
+        location,
+        description
+      } = req.body
+      let requireCheck = []
 
-    if (!createEmail) {
-      requireCheck.push('createEmail is required')
-    }
-    // if (!emailRegex.test(createEmail)) {
-    //   requireCheck.push('email not valid')
-    // }
-    if (!createPassword) {
-      requireCheck.push('createPassword is required')
-    }
-    if (!name) {
-      requireCheck.push('name is required')
-    }
-    if (!location) {
-      requireCheck.push('location is required')
-    }
-    if (!description) {
-      requireCheck.push('description is required')
-    }
-    if (!req.file) {
-      requireCheck.push('File for logo is Required')
-    }
+      if (!createEmail) {
+        requireCheck.push('createEmail is required')
+      }
+      // if (!emailRegex.test(createEmail)) {
+      //   requireCheck.push('email not valid')
+      // }
+      if (!createPassword) {
+        requireCheck.push('createPassword is required')
+      }
+      if (!name) {
+        requireCheck.push('name is required')
+      }
+      if (!location) {
+        requireCheck.push('location is required')
+      }
+      if (!description) {
+        requireCheck.push('description is required')
+      }
+      if (!req.file) {
+        if (err instanceof multer.MulterError) {
+          if (err.message === 'File to large') {
+            // A Multer error occurred when uploading.
+            console.log(req.file)
+            requireCheck.push('File to large, max size is 1mb')
+          } else if (err) {
+            // An unknown error occurred when uploading.
+            requireCheck.push('Error upload')
+          }
+        } 
+      } else {
+        requireCheck.push('File for showcase is Required')
+      }
 
-    if (requireCheck.length) {
-      return template.tmpErr(res, requireCheck, 400)
-    }
+      if (requireCheck.length) {
+        return template.tmpErr(res, requireCheck, 400)
+      }
 
-    const logo = process.env.BASE_URL + '/images/' + req.file.filename
-    const hashPassword = bcrypt.hashSync(createPassword, salt)
-    const data = {
-      id,
-      email: createEmail,
-      password: hashPassword,
-      name,
-      logo,
-      location,
-      description
-    }
-    companyMod.getUser(data.email)
-      .then(result => {
-        if (result.length === 0) {
-          companyMod.storeCompany(data)
-            .then(result => {
-              redisClient.flushdb()
-              template.tmpNormal(result, res, 'Success Create New Company', 201, null, true)
-            })
-            .catch(err => {
-              template.tmpErr(res, err, 400)
-            })
-        } else {
-          template.tmpNormal([],res, 'email was taken', 200)
-        }
-      })
-      .catch(err => {
-        template.tmpErr(res, err, 400)
-      })
+      const logo = process.env.BASE_URL + '/images/' + req.file.filename
+      const hashPassword = bcrypt.hashSync(createPassword, salt)
+      const data = {
+        id,
+        email: createEmail,
+        password: hashPassword,
+        name,
+        logo,
+        location,
+        description
+      }
+      companyMod.getUser(data.email)
+        .then(result => {
+          if (result.length === 0) {
+            companyMod.storeCompany(data)
+              .then(result => {
+                redisClient.flushdb()
+                template.tmpNormal(result, res, 'Success Create New Company', 201, null, true)
+              })
+              .catch(err => {
+                template.tmpErr(res, err, 400)
+              })
+          } else {
+            template.tmpNormal([],res, 'email was taken', 200)
+          }
+        })
+        .catch(err => {
+          template.tmpErr(res, err, 400)
+        })
+    })
   },
 
   update: (req, res) => {
-    const id = req.params.id
-    const {
-      name,
-      location,
-      description
-    } = req.body
-    const logo = process.env.BASE_URL + '/images/' + req.file.filename
-    const data = [
-      name,
-      logo,
-      location,
-      description,
-      id
-    ]
-    companyMod.updateCompany(data)
-      .then(result => {
-        redisClient.flushdb()
-        template.tmpNormal(result, res, 'Success Update Data Company', 201, null, true)
-      })
-      .catch(err => {
-        template.tmpErr(res, err, 400)
-      })
+    uploadmiddleware.upload(req, res, function (err) {
+      const id = req.params.id
+      const {
+        name,
+        location,
+        description
+      } = req.body
+      let requireCheck = []
+      let logo = ''
+
+      if (!name) {
+        requireCheck.push('name is required')
+      }
+      if (!location) {
+        requireCheck.push('location is required')
+      }
+      if (!description) {
+        requireCheck.push('description is required')
+      }
+      if (!req.file) {
+        if (err instanceof multer.MulterError) {
+          if (err.message === 'File to large') {
+            // A Multer error occurred when uploading.
+            console.log(req.file)
+            requireCheck.push('File to large, max size is 1mb')
+          } else if (err) {
+            // An unknown error occurred when uploading.
+            requireCheck.push('Error upload')
+          }
+        } 
+      } else {
+        logo = process.env.BASE_URL + '/images/' + req.file.filename
+      }
+
+      if (requireCheck.length) {
+        return template.tmpErr(res, requireCheck, 400)
+      }
+      let fileNeeded = true
+      let data = [
+        name,
+        logo,
+        location,
+        description,
+        id
+      ]
+      if (!logo) {
+        fileNeeded = false
+        data = [
+          name,
+          location,
+          description,
+          id
+        ]
+      }
+
+      companyMod.updateCompany(data,fileNeeded)
+        .then(result => {
+          redisClient.flushdb()
+          template.tmpNormal(result, res, 'Success Update Data Company', 201, null, true)
+        })
+        .catch(err => {
+          template.tmpErr(res, err, 400)
+        })
+    })
   },
 
   deleting: (req, res) => {

@@ -64,8 +64,11 @@ module.exports = {
     })
   },
 
-  updateCompany: (data) => {
-    const query = 'UPDATE company SET name = ?, logo = ?, location = ?, description = ? WHERE id = ?'
+  updateCompany: (data,fileNeded) => {
+    let query = 'UPDATE company SET name = ?, logo = ?, location = ?, description = ? WHERE id = ?'
+    if (!fileNeded) {
+      query = 'UPDATE company SET name = ?, location = ?, description = ? WHERE id = ?'
+    }
     return new Promise((resolve, reject) => {
       conn.query(query, data, (err, result) => {
         if (!err) {

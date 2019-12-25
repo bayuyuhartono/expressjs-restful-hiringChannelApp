@@ -2,7 +2,7 @@ require('dotenv/config')
 const uuidv4 = require('uuid/v4')
 const jwt = require('jsonwebtoken')
 const engineerMod = require('../models/engineerMod')
-var template = require('../middleware/responseMiddleware')
+const template = require('../middleware/responseMiddleware')
 const bcrypt = require('bcrypt')
 const salt = bcrypt.genSaltSync(10)
 // const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -18,7 +18,7 @@ module.exports = {
       password
     } = req.body
     console.log(req.body)
-    const requireCheck = []
+    let requireCheck = []
     if (!email) {
       requireCheck.push('Email is required')
     }
@@ -41,7 +41,7 @@ module.exports = {
         if (!hashChecking) {
           template.tmpErr(res, 'Login Failed', 400)
         } else {
-          const token = jwt.sign({ who: 'engineer', email: dataEmail, id: dataId }, process.env.JWT_KEY, { expiresIn: '1h' })
+          const token = jwt.sign({ who: 'engineer', email: dataEmail, id: dataId }, process.env.JWT_KEY, { expiresIn: '4h' })
           result[0].who = 'engineer'
           result[0].token = token
           template.tmpNormal(result, res, 'Login Success', 201)
@@ -59,7 +59,7 @@ module.exports = {
         if (req.query.page && isNaN(req.query.page) === false) {
           page = req.query.page
         }
-        // store Total count in variable
+        // store Total count in constiable
         const totalCount = result[0].TotalCount
         let limit = 5
         if (req.query.limit) {
@@ -87,7 +87,7 @@ module.exports = {
         engineerMod.getEngineer(req)
           .then(result => {
             if (result.length === 0) {
-              template.tmpErr(result, 'Not Found', 404)
+              template.tmpNormal([], res, 'Not Found', 200)
             } else {
               template.tmpEngineers(result, res, 'Success Get Engineers', pagingInfo, req.originalUrl)
             }
@@ -130,7 +130,7 @@ module.exports = {
         age,
         expectedSallary
       } = req.body
-      const requireCheck = []
+      let requireCheck = []
 
       if (!createEmail) {
         requireCheck.push('createEmail is required')
@@ -224,35 +224,87 @@ module.exports = {
   },
 
   update: (req, res) => {
-    const id = req.params.id
-    const {
-      name,
-      description,
-      skill,
-      location,
-      dateOfBirth
-    } = req.body
-    var moment = req.timestamp
-    var dateUpdated = moment.tz('Asia/Jakarta').format()
-    const showcase = process.env.BASE_URL + '/images/' + req.file.filename
-    const data = [
-      name,
-      description,
-      skill,
-      location,
-      dateOfBirth,
-      showcase,
-      dateUpdated,
-      id
-    ]
-    engineerMod.updateEngineer(data)
-      .then(result => {
-        redisClient.flushdb()
-        template.tmpNormal(result, res, 'Success Update Engineer', 200, null, true)
-      })
-      .catch(err => {
-        template.tmpErr(res, err + 'error model', 400)
-      })
+    uploadmiddleware.uploadShowcase(req, res, function (err) {
+      const id = req.params.id
+      const {
+        name,
+        description,
+        skill,
+        location,
+        dateOfBirth
+      } = req.body
+      let requireCheck = []
+      let showcase = ''
+
+      if (!name) {
+        requireCheck.push('name is required')
+      }
+      if (!description) {
+        requireCheck.push('description is required')
+      }
+      if (!skill) {
+        requireCheck.push('skill is required')
+      }
+      if (!location) {
+        requireCheck.push('location is required')
+      }
+      if (!dateOfBirth) {
+        requireCheck.push('dateOfBirth is required')
+      }
+      if (!req.file) {
+        if (err instanceof multer.MulterError) {
+          if (err.message === 'File to large') {
+            // A Multer error occurred when uploading.
+            console.log(req.file)
+            requireCheck.push('File to large, max size is 1mb')
+          } else if (err) {
+            // An unknown error occurred when uploading.
+            requireCheck.push('Error upload')
+          }
+        }
+      } else {
+        showcase = process.env.BASE_URL + '/images/' + req.file.filename
+      }
+
+      if (requireCheck.length) {
+        return template.tmpErr(res, requireCheck, 400)
+      }
+
+      const moment = req.timestamp
+      const dateUpdated = moment.tz('Asia/Jakarta').format()
+      let fileNeeded = true
+      let data = [
+        name,
+        description,
+        skill,
+        location,
+        dateOfBirth,
+        showcase,
+        dateUpdated,
+        id
+      ]
+      if (!showcase) {
+        fileNeeded = false
+        data = [
+          name,
+          description,
+          skill,
+          location,
+          dateOfBirth,
+          dateUpdated,
+          id
+        ]
+      }
+      
+      engineerMod.updateEngineer(data,fileNeeded)
+        .then(result => {
+          redisClient.flushdb()
+          template.tmpNormal(result, res, 'Success Update Engineer', 200, null, true)
+        })
+        .catch(err => {
+          template.tmpErr(res, err + 'error model', 400)
+        })
+    })
   },
 
   deleting: (req, res) => {

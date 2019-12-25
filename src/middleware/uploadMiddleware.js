@@ -27,7 +27,7 @@ module.exports = {
   upload: multer({
     storage: storage,
     limits: { fileSize: maxSize }
-  }),
+  }).single('logo'),
   uploadShowcase: multer({
     storage: storage,
     limits: { fileSize: maxSize }
