@@ -58,7 +58,7 @@ module.exports = {
           console.log(111)
           resolve(result)
         } else {
-          reject(new Error(err))
+          reject(new Error(query))
         }
       })
     })
@@ -74,7 +74,7 @@ module.exports = {
         if (!err) {
           resolve(result)
         } else {
-          reject(new Error(err))
+          reject(new Error(query))
         }
       })
     })

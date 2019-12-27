@@ -120,13 +120,13 @@ module.exports = {
             // An unknown error occurred when uploading.
             requireCheck.push('Error upload')
           }
-        } 
-      } else {
-        requireCheck.push('File for showcase is Required')
-      }
+        } else {
+          requireCheck.push('File for Logo is Required')
+        }
+      } 
 
       if (requireCheck.length) {
-        return template.tmpErr(res, requireCheck, 400)
+        return template.tmpErr(res, file, 400)
       }
 
       const logo = process.env.BASE_URL + '/images/' + req.file.filename
@@ -197,7 +197,7 @@ module.exports = {
       }
 
       if (requireCheck.length) {
-        return template.tmpErr(res, requireCheck, 400)
+        return template.tmpErr(res, 'requireCheck', 400)
       }
       let fileNeeded = true
       let data = [
