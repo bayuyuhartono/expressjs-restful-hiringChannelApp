@@ -80,8 +80,8 @@ module.exports = {
           total_page: totalpage.toString(),
           current_page: page.toString(),
           total_record: totalCount.toString(),
-          prevLink: `${process.env.BASE_URL}${req.originalUrl.replace('page=' + page, 'page=' + prevPage)}`,
-          nextLink: `${process.env.BASE_URL}${req.originalUrl.replace('page=' + page, 'page=' + nextPage)}`
+          prevLink: `${req.originalUrl.replace('page=' + page, 'page=' + prevPage)}`,
+          nextLink: `${req.originalUrl.replace('page=' + page, 'page=' + nextPage)}`
         }
         console.log(pagingInfo.nextLink)
         engineerMod.getEngineer(req)
@@ -131,6 +131,7 @@ module.exports = {
         expectedSallary
       } = req.body
       let requireCheck = []
+      let showcase = '/images/nopic.png'
 
       if (!createEmail) {
         requireCheck.push('createEmail is required')
@@ -172,9 +173,9 @@ module.exports = {
             // An unknown error occurred when uploading.
             requireCheck.push('Error upload')
           }
-        } else {
-          requireCheck.push('File for showcase is Required')
         }
+      } else {
+        showcase = '/images/' + req.file.filename
       }
 
       if (requireCheck.length) {
@@ -184,7 +185,6 @@ module.exports = {
       const moment = req.timestamp
       const dateCreated = moment.tz('Asia/Jakarta').format()
       const dateUpdated = moment.tz('Asia/Jakarta').format()
-      const showcase = process.env.BASE_URL + '/images/' + req.file.filename
       const hashPassword = bcrypt.hashSync(createPassword, salt)
       const data = {
         id,
@@ -231,7 +231,8 @@ module.exports = {
         description,
         skill,
         location,
-        dateOfBirth
+        dateOfBirth,
+        expectedSallary,
       } = req.body
       let requireCheck = []
       let showcase = ''
@@ -251,6 +252,9 @@ module.exports = {
       if (!dateOfBirth) {
         requireCheck.push('dateOfBirth is required')
       }
+      if (!expectedSallary) {
+        requireCheck.push('expectedSallary is required')
+      }
       if (!req.file) {
         if (err instanceof multer.MulterError) {
           if (err.message === 'File to large') {
@@ -263,7 +267,7 @@ module.exports = {
           }
         }
       } else {
-        showcase = process.env.BASE_URL + '/images/' + req.file.filename
+        showcase = '/images/' + req.file.filename
       }
 
       if (requireCheck.length) {
@@ -279,6 +283,7 @@ module.exports = {
         skill,
         location,
         dateOfBirth,
+        expectedSallary,
         showcase,
         dateUpdated,
         id
@@ -291,6 +296,7 @@ module.exports = {
           skill,
           location,
           dateOfBirth,
+          expectedSallary,
           dateUpdated,
           id
         ]

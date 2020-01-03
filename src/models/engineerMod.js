@@ -85,9 +85,9 @@ module.exports = {
   },
 
   updateEngineer: (data,fileNeded) => {
-    let query = 'UPDATE  engineer  SET  name = ?, description = ?, skill = ?, location = ?, dateOfBirth = ?, showcase = ?, dateUpdated = ? WHERE id = ?'
+    let query = 'UPDATE  engineer  SET  name = ?, description = ?, skill = ?, location = ?, dateOfBirth = ?, expectedSallary = ?, showcase = ?, dateUpdated = ? WHERE id = ?'
     if (!fileNeded) {
-      query = 'UPDATE  engineer  SET  name = ?, description = ?, skill = ?, location = ?, dateOfBirth = ?, dateUpdated = ? WHERE id = ?'
+      query = 'UPDATE  engineer  SET  name = ?, description = ?, skill = ?, location = ?, dateOfBirth = ?, expectedSallary = ?, dateUpdated = ? WHERE id = ?'
     }
     console.log(query + data)
     return new Promise((resolve, reject) => {

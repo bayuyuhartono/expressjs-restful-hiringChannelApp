@@ -91,6 +91,7 @@ module.exports = {
         description
       } = req.body
       let requireCheck = []
+      let logo = '/images/nopicLogo.png'
 
       if (!createEmail) {
         requireCheck.push('createEmail is required')
@@ -120,16 +121,15 @@ module.exports = {
             // An unknown error occurred when uploading.
             requireCheck.push('Error upload')
           }
-        } else {
-          requireCheck.push('File for Logo is Required')
         }
-      } 
+      } else {
+        logo = '/images/' + req.file.filename
+      }
 
       if (requireCheck.length) {
         return template.tmpErr(res, file, 400)
       }
 
-      const logo = process.env.BASE_URL + '/images/' + req.file.filename
       const hashPassword = bcrypt.hashSync(createPassword, salt)
       const data = {
         id,
@@ -193,7 +193,7 @@ module.exports = {
           }
         } 
       } else {
-        logo = process.env.BASE_URL + '/images/' + req.file.filename
+        logo = '/images/' + req.file.filename
       }
 
       if (requireCheck.length) {
