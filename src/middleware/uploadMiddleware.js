@@ -1,10 +1,10 @@
 const multer = require('multer')
 const uuidv1 = require('uuid/v1')
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (request, file, cb) => {
     cb(null, './public/images')
   },
-  filename: (req, file, cb) => {
+  filename: (request, file, cb) => {
     let filetype = ''
     if (file.mimetype === 'image/gif') {
       filetype = 'gif'

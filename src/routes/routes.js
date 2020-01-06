@@ -6,6 +6,7 @@ const cachemiddleware = require('../middleware/cacheMiddleware')
 const engineerCon = require('../controllers/engineerCon')
 const companyCon = require('../controllers/companyCon')
 const messageCon = require('../controllers/messageCon')
+const uploadmiddleware = require('../middleware/uploadMiddleware')
 
 module.exports = router
 // engineer --------------
@@ -16,7 +17,7 @@ router.route('/engineer/:id').get(cachemiddleware.checkCache, engineerCon.show)
 
 router.route('/engineer').post(engineerCon.create)
 router.route('/engineer/:id').put(engineerCon.update)
-router.route('/engineer/avatar/:id').put(engineerCon.updateShowcase)
+router.route('/engineer/avatar/:id').put(uploadmiddleware.uploadShowcase, engineerCon.updateShowcase)
 router.route('/engineer/:id').delete(engineerCon.deleting)
 
 // company ----------------
@@ -27,7 +28,7 @@ router.route('/company/:id').get( cachemiddleware.checkCache, companyCon.show)
 
 router.route('/company').post( companyCon.create)
 router.route('/company/:id').put(companyCon.update)
-router.route('/company/avatar/:id').put(companyCon.updateLogo)
+router.route('/company/avatar/:id').put(uploadmiddleware.upload, companyCon.updateLogo)
 router.route('/company/:id').delete(companyCon.deleting)
 
 // message -----------------

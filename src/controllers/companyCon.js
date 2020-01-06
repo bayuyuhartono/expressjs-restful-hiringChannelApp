@@ -229,7 +229,7 @@ module.exports = {
   },
 
   updateLogo: (req, res) => {
-    uploadmiddleware.upload(req, res, function (err) {
+    // uploadmiddleware.upload(req, res, function (err) {
       const id = req.params.id
       let logo = ''
       let requireCheck = []
@@ -271,7 +271,7 @@ module.exports = {
         .catch(err => {
           template.tmpErr(res, err + 'error model', 400)
         })
-    })
+    // })
   },
 
   deleting: (req, res) => {

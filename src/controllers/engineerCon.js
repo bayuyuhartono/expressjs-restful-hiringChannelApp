@@ -314,24 +314,13 @@ module.exports = {
   },
 
   updateShowcase: (req, res) => {
-    uploadmiddleware.uploadShowcase(req, res, function (err) {
+    // uploadmiddleware.uploadShowcase(req, res, function (err) {
       const id = req.params.id
       let showcase = ''
       let requireCheck = []
 
       if (!req.file) {
-        if (err instanceof multer.MulterError) {
-          if (err.message === 'File to large') {
-            // A Multer error occurred when uploading.
-            console.log(req.file)
-            requireCheck.push('File to large, max size is 1mb')
-          } else if (err) {
-            // An unknown error occurred when uploading.
-            requireCheck.push('Error upload')
-          }
-        } else {
-          requireCheck.push('File must be input ')
-        }
+        requireCheck.push('File must be input ')
       } else {
         showcase = '/images/' + req.file.filename
       }
@@ -356,7 +345,7 @@ module.exports = {
         .catch(err => {
           template.tmpErr(res, err + 'error model', 400)
         })
-    })
+    // })
   },
 
 
