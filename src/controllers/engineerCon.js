@@ -314,7 +314,6 @@ module.exports = {
   },
 
   updateShowcase: (req, res) => {
-    // uploadmiddleware.uploadShowcase(req, res, function (err) {
       const id = req.params.id
       let showcase = ''
       let requireCheck = []
@@ -345,7 +344,6 @@ module.exports = {
         .catch(err => {
           template.tmpErr(res, err + 'error model', 400)
         })
-    // })
   },
 
 
