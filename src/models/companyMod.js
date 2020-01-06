@@ -80,6 +80,21 @@ module.exports = {
     })
   },
 
+  updateLogo: (data) => {
+    let query = 'UPDATE company  SET  logo = ?, dateUpdated = ? WHERE id = ?'
+    console.log(query + data)
+    return new Promise((resolve, reject) => {
+      conn.query(query, data, (err, result) => {
+        if (!err) {
+          console.log(2)
+          resolve(result)
+        } else {
+          reject(new Error(query))
+        }
+      })
+    })
+  },
+
   deleteCompany: (id) => {
     const query = 'DELETE FROM company WHERE id = ?'
     return new Promise((resolve, reject) => {

@@ -2,7 +2,7 @@ require('dotenv/config')
 const uuidv4 = require('uuid/v4')
 const jwt = require('jsonwebtoken')
 const companyMod = require('../models/companyMod')
-var template = require('../middleware/responseMiddleware')
+const template = require('../middleware/responseMiddleware')
 const bcrypt = require('bcrypt')
 const salt = bcrypt.genSaltSync(10)
 // const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -224,6 +224,52 @@ module.exports = {
         })
         .catch(err => {
           template.tmpErr(res, err, 400)
+        })
+    })
+  },
+
+  updateLogo: (req, res) => {
+    uploadmiddleware.upload(req, res, function (err) {
+      const id = req.params.id
+      let logo = ''
+      let requireCheck = []
+
+      if (!req.file) {
+        if (err instanceof multer.MulterError) {
+          if (err.message === 'File to large') {
+            // A Multer error occurred when uploading.
+            console.log(req.file)
+            requireCheck.push('File to large, max size is 1mb')
+          } else if (err) {
+            // An unknown error occurred when uploading.
+            requireCheck.push('Error upload')
+          }
+        } else {
+          requireCheck.push('File must be input ')
+        }
+      } else {
+        logo = '/images/' + req.file.filename
+      }
+
+      if (requireCheck.length) {
+        return template.tmpErr(res, requireCheck, 400)
+      }
+
+      const moment = req.timestamp
+      const dateUpdated = moment.tz('Asia/Jakarta').format()
+      let data = [
+        logo,
+        dateUpdated,
+        id
+      ]
+      
+      companyMod.updateLogo(data)
+        .then(result => {
+          redisClient.flushdb()
+          template.tmpNormal(result, res, 'Success Update Company Logo', 200, null, true)
+        })
+        .catch(err => {
+          template.tmpErr(res, err + 'error model', 400)
         })
     })
   },

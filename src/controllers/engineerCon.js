@@ -313,6 +313,53 @@ module.exports = {
     })
   },
 
+  updateShowcase: (req, res) => {
+    uploadmiddleware.uploadShowcase(req, res, function (err) {
+      const id = req.params.id
+      let showcase = ''
+      let requireCheck = []
+
+      if (!req.file) {
+        if (err instanceof multer.MulterError) {
+          if (err.message === 'File to large') {
+            // A Multer error occurred when uploading.
+            console.log(req.file)
+            requireCheck.push('File to large, max size is 1mb')
+          } else if (err) {
+            // An unknown error occurred when uploading.
+            requireCheck.push('Error upload')
+          }
+        } else {
+          requireCheck.push('File must be input ')
+        }
+      } else {
+        showcase = '/images/' + req.file.filename
+      }
+
+      if (requireCheck.length) {
+        return template.tmpErr(res, requireCheck, 400)
+      }
+
+      const moment = req.timestamp
+      const dateUpdated = moment.tz('Asia/Jakarta').format()
+      let data = [
+        showcase,
+        dateUpdated,
+        id
+      ]
+      
+      engineerMod.updateShowcase(data)
+        .then(result => {
+          redisClient.flushdb()
+          template.tmpNormal(result, res, 'Success Update Engineer Showcase', 200, null, true)
+        })
+        .catch(err => {
+          template.tmpErr(res, err + 'error model', 400)
+        })
+    })
+  },
+
+
   deleting: (req, res) => {
     const id = req.params.id
     engineerMod.deleteEngineer(id)

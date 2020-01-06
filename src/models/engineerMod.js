@@ -102,6 +102,21 @@ module.exports = {
     })
   },
 
+  updateShowcase: (data) => {
+    let query = 'UPDATE  engineer  SET  showcase = ?, dateUpdated = ? WHERE id = ?'
+    console.log(query + data)
+    return new Promise((resolve, reject) => {
+      conn.query(query, data, (err, result) => {
+        if (!err) {
+          console.log(2)
+          resolve(result)
+        } else {
+          reject(new Error(query))
+        }
+      })
+    })
+  },
+
   deleteEngineer: (id) => {
     const query = 'DELETE FROM engineer WHERE id = ?'
     return new Promise((resolve, reject) => {

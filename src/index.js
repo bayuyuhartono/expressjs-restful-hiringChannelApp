@@ -1,14 +1,12 @@
 const express = require('express')
 const router = express.Router()
+var cors = require('cors')
 
 // import Routes
 var routeNav = require('./routes/routes')
-router.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*') // update to match the domain you will make the request from
-  res.header('Access-Control-Allow-Methods', '*')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, email')
-  next()
-})
+// cors
+router.use(cors())
+
 router
   .use('/api/v1', routeNav)
 
