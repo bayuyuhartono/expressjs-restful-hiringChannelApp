@@ -256,7 +256,7 @@ module.exports = {
       }
 
       const moment = req.timestamp
-      const dateUpdated = moment.tz('Asia/Jakarta').format()
+      const dateUpdated = moment.tz('Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
       let data = [
         logo,
         dateUpdated,
