@@ -183,8 +183,8 @@ module.exports = {
       }
 
       const moment = req.timestamp
-      const dateCreated = moment.tz('Asia/Jakarta').format("YYYY-MM-DD HH")
-      const dateUpdated = moment.tz('Asia/Jakarta').format("YYYY-MM-DD HH")
+      const dateCreated = moment.tz('Asia/Jakarta').format("YYYY-MM-DD")
+      const dateUpdated = moment.tz('Asia/Jakarta').format("YYYY-MM-DD")
       const hashPassword = bcrypt.hashSync(createPassword, salt)
       const data = {
         id,
@@ -275,7 +275,7 @@ module.exports = {
       }
 
       const moment = req.timestamp
-      const dateUpdated = moment.tz('Asia/Jakarta').format("YYYY-MM-DD HH")
+      const dateUpdated = moment.tz('Asia/Jakarta').format("YYYY-MM-DD")
       let fileNeeded = true
       let data = [
         name,
@@ -341,7 +341,7 @@ module.exports = {
       }
 
       const moment = req.timestamp
-      const dateUpdated = moment.tz('Asia/Jakarta').format("YYYY-MM-DD HH")
+      const dateUpdated = moment.tz('Asia/Jakarta').format("YYYY-MM-DD")
       let data = [
         showcase,
         dateUpdated,
