@@ -198,8 +198,6 @@ module.exports = {
         age,
         expectedSallary,
         showcase,
-        dateCreated,
-        dateUpdated
       }
       engineerMod.getUser(data.email)
         .then(result => {
