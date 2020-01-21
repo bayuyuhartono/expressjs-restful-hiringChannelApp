@@ -21,5 +21,5 @@ $ cp .env.example .env
 ```
 run the server
 ```
-$ npm run start
+$ npm start
 ```
