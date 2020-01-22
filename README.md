@@ -1,5 +1,5 @@
 # expressjs-restful-hiringChannelApp
-To install expressjs-restful-hiringChannelApp, follow these steps:
+RESTfull API Hiring Channel is a simple application specially for backend only. Built with NodeJs using the ExpressJs Framework.
 ## Requirements
 1. [Node.js](https://nodejs.org/en/)
 2. [Express.js](https://expressjs.com/)
@@ -7,6 +7,7 @@ To install expressjs-restful-hiringChannelApp, follow these steps:
 4. [Redis](https://redis.io/)
 5. [Postman](https://www.getpostman.com/)
 ## Installing
+To install expressjs-restful-hiringChannelApp, follow these steps:
 1. clone from Github:
 ```
 $ git clone https://github.com/bayuyuhartono/expressjs-restful-hiringChannelApp.git
@@ -37,3 +38,5 @@ JWT_KEY = secret-weapon
 ```
 $ npm start
 ```
+8. See all the end point in routes folder
+9. Request the end point API with [Postman](https://www.getpostman.com/) application and enjoy.. 
