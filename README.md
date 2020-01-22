@@ -27,9 +27,9 @@ DB_USER =
 DB_PASSWORD = 
 DB_DATABASE = 
 
-REDIS_URL = localhost:6379
-BASE_URL = http://localhost:3030
-JWT_KEY = secret-weapon
+REDIS_URL = 
+BASE_URL = 
+JWT_KEY = 
 ```
 5. install [redis](https://redis.io/topics/quickstart)
 6. Create a database with the name hiring_cannel, and Import file [hiring_channel.sql](https://github.com/bayuyuhartono/expressjs-restful-hiringChannelApp/blob/master/hiring_channel.sql) to phpmyadmin
