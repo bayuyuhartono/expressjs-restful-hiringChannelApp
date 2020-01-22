@@ -37,4 +37,3 @@ JWT_KEY = secret-weapon
 ```
 $ npm start
 ```
-## EndPoint
